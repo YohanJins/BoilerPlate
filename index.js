@@ -1,16 +1,40 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const bodyParser = require('body-parser');
+const config = require('./config/key');
+const {User} = require("./models/User");
+
+//application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended: true}));
+
+//aplication/json
+app.use(bodyParser.json());
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://yohanjin0925:Akwldrk33!@boilerplate.gv05qhz.mongodb.net/?retryWrites=true&w=majority&appName=BoilerPlate', ).then(() => console.log('MongoDB Connected...'))
+mongoose.connect(config.mongoURI, 
+).then(() => console.log('MongoDB Connected...'))
+.catch(err => console.log(err))
 //{useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false}  :: The newer version of MongoDB Node.js since 4.0.0 need them no longer
 
-.catch(err => console.log(err))
+
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello World! I am Yohan!')
 })
+
+app.post('/register', async (req, res) => {
+  const user = new User(req.body);
+
+  try {
+    // Save user to the database
+    await user.save();
+    res.status(200).json({ success: true });
+  } catch (err) {
+    // Handle errors
+    res.json({ success: false, err });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
