@@ -1,7 +1,8 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const app = express();
+const port = 3000;
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser'); 
 const config = require('./config/key');
 const {User} = require("./models/User");
 
@@ -10,8 +11,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //aplication/json
 app.use(bodyParser.json());
+app.use(cookieParser());
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 mongoose.connect(config.mongoURI, 
 ).then(() => console.log('MongoDB Connected...'))
 .catch(err => console.log(err))
@@ -35,6 +37,33 @@ app.post('/register', async (req, res) => {
     res.json({ success: false, err });
   }
 });
+
+app.post('/login', async (req, res) => {
+  try {
+    // Find Email from the database
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.json({
+        loginSuccess: false,
+        message: "No corresponding User for the Email"
+      });
+    }
+    // If the Email is found, verify the password
+    const isMatch = await user.comparePassword(req.body.password);
+    if (!isMatch) {
+      return res.json({ loginSuccess: false, message: "Wrong password" });
+    }
+    // Generate a Token if the password is verified
+    const userWithToken = await user.generateToken();
+    // Save token to cookie
+    res.cookie("x_auth", userWithToken.token)
+       .status(200)
+       .json({ loginSuccess: true, userId: userWithToken._id });
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
