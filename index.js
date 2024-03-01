@@ -4,6 +4,7 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser'); 
 const config = require('./config/key');
+const {auth} = require('./middleware/auth');
 const {User} = require("./models/User");
 
 //application/x-www-form-urlencoded
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
   res.send('Hello World! I am Yohan!')
 })
 
-app.post('/register', async (req, res) => {
+app.post('/api/users/register', async (req, res) => {
   const user = new User(req.body);
 
   try {
@@ -38,7 +39,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/api/users/login', async (req, res) => {
   try {
     // Find Email from the database
     const user = await User.findOne({ email: req.body.email });
@@ -63,6 +64,41 @@ app.post('/login', async (req, res) => {
     res.status(400).send(err);
   }
 });
+
+
+app.get('/api/users/auth', auth, (req, res) => {
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role ===0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image
+  })
+})
+
+app.get('/api/users/logout', auth, (req, res) => {
+  User.findOneAndUpdate({
+      _id: req.user._id
+  }, {
+      token: ""
+  })
+  .then(() => {
+      return res.status(200).json({
+          logoutSuccess: true
+      });
+  })
+  .catch((err) => {
+      return res.status(400).json({
+          logoutSuccess: false,
+          message: err.message
+      });
+  })
+})
+
+
 
 
 app.listen(port, () => {

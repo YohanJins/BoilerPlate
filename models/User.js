@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
+const util = require('util');
 
 const userSchema = mongoose.Schema({
   name: {
@@ -76,6 +77,24 @@ userSchema.methods.generateToken = async function() {
     throw err;
   }
 };
+
+
+userSchema.statics.findByToken = function(token) {
+  const user = this;
+
+  return util.promisify(jwt.verify)(token, 'secretToken')
+      .then((decoded) => {
+          console.log(decoded);
+          return user.findOne({
+              "_id": decoded,
+              "token": token
+          });
+      })
+      .catch((err) => {
+          console.log(err);
+          throw new Error("유효하지 않은 토큰입니다.");
+      });
+}
 
 
 
