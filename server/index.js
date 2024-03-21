@@ -80,11 +80,7 @@ app.get('/api/users/auth', auth, (req, res) => {
 })
 
 app.get('/api/users/logout', auth, (req, res) => {
-  User.findOneAndUpdate({
-      _id: req.user._id
-  }, {
-      token: ""
-  })
+  User.findOneAndUpdate({_id: req.user._id}, {token: ""})
   .then(() => {
       return res.status(200).json({
           logoutSuccess: true

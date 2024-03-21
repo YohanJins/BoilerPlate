@@ -2,9 +2,9 @@
   "name": "boiler-plate",
   "version": "1.0.0",
   "description": "Boiler-plate",
-  "main": "index.js",
+  "main": "./server/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node ./server/index.js",
     "backend": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
