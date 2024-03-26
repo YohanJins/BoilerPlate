@@ -5,7 +5,7 @@ import { loginUser } from '../../../_actions/user_action';
 
 function LoginPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
 
@@ -28,7 +28,7 @@ function LoginPage() {
     dispatch(loginUser(body))
       .then(response => {
         if (response.payload.loginSuccess) {
-          navigate('/'); // 로그인 성공 시 홈페이지로 이동
+          navigate('/');
         } else {
           alert('Error');
         }
