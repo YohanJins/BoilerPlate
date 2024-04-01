@@ -1,6 +1,6 @@
 <strong>**Boiler Plate Demo Video(Image Click!)</strong>
 
-[![영상 제목](https://img.youtube.com/vi/ZOJlUl_oRxw&ab/0.jpg)](https://www.youtube.com/watch?v=ZOJlUl_oRxw&ab_channel=YOHANJIN)
+[![영상 제목](https://img.youtube.com/vi/oRxw&ab/0.jpg)](https://www.youtube.com/watch?v=ZOJlUl_oRxw&ab_channel=YOHANJIN)
 
 
 
